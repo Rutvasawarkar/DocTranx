@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Document ──────────────────────────────────────────────────
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  EXTRACTED
+  ANALYSED
+  READY
+  EXPORT_PENDING
+  EXPORTED
+  FAILED
+  DELETED
+}
+
+model Document {
+  id          String         @id @default(uuid()) @db.Uuid
+  fileName    String         @map("file_name")
+  mimeType    String         @map("mime_type")
+  sizeBytes   BigInt         @map("size_bytes")
+  checksum    String         // SHA-256 hex
+  filePath    String         @map("file_path")
+  status      DocumentStatus @default(UPLOADED)
+  tenantId    String         @map("tenant_id")
+  uploadedBy  String         @map("uploaded_by")
+
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  deletedAt   DateTime?      @map("deleted_at")
+
+  metadata    DocumentMetadata[]
+  edits       DocumentEdit[]
+  versions    DocumentVersion[]
+  exportJobs  ExportJob[]
+  auditLogs   AuditLog[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([mimeType])
+  @@map("documents")
+}
+
+// ─── Document Metadata (key/value pairs) ───────────────────────
+
+model DocumentMetadata {
+  id          String   @id @default(uuid()) @db.Uuid
+  documentId  String   @map("document_id") @db.Uuid
+  key         String
+  value       String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, key])
+  @@index([key])
+  @@map("document_metadata")
+}
+
+// ─── Document Edits ────────────────────────────────────────────
+
+enum EditType {
+  TEXT
+  TABLE
+  IMAGE
+  HEADER_FOOTER
+  FORMAT_CONVERSION
+  FIND_REPLACE
+}
+
+model DocumentEdit {
+  id           String   @id @default(uuid()) @db.Uuid
+  documentId   String   @map("document_id") @db.Uuid
+  editType     EditType @map("edit_type")
+  diffPayload  Json     @map("diff_payload")
+  description  String?
+  editedBy     String   @map("edited_by")
+  versionId    String?  @map("version_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  version      DocumentVersion? @relation(fields: [versionId], references: [id])
+
+  @@index([documentId])
+  @@index([createdAt])
+  @@map("document_edits")
+}
+
+// ─── Document Versions ─────────────────────────────────────────
+
+model DocumentVersion {
+  id              String   @id @default(uuid()) @db.Uuid
+  documentId      String   @map("document_id") @db.Uuid
+  versionNumber   Int      @map("version_number")
+  filePath        String   @map("file_path")
+  checksum        String?
+  structuredJson  Json?    @map("structured_json")
+  diffSnapshot    Json?    @map("diff_snapshot")
+  modifiedBy      String   @map("modified_by")
+  description     String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  document        Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  edits           DocumentEdit[]
+
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+  @@index([createdAt])
+  @@map("document_versions")
+}
+
+// ─── Export Jobs ───────────────────────────────────────────────
+
+enum ExportFormat {
+  PDF
+  DOCX
+  PPTX
+  HTML
+  EPUB
+  RTF
+  TXT
+}
+
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model ExportJob {
+  id              String       @id @default(uuid()) @db.Uuid
+  documentId      String       @map("document_id") @db.Uuid
+  format          ExportFormat
+  status          ExportStatus @default(PENDING)
+  outputFilePath  String?      @map("output_file_path")
+  downloadUrl     String?      @map("download_url")
+  urlExpiresAt    DateTime?    @map("url_expires_at")
+  watermark       Boolean      @default(false)
+  passwordHash    String?      @map("password_hash")
+  errorMessage    String?      @map("error_message")
+  requestedBy     String       @map("requested_by")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  completedAt     DateTime?    @map("completed_at")
+
+  document        Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([status])
+  @@map("export_jobs")
+}
+
+// ─── Audit Log ─────────────────────────────────────────────────
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  action      String   // e.g. "document.uploaded", "document.edited", "document.exported"
+  userId      String   @map("user_id")
+  documentId  String?  @map("document_id") @db.Uuid
+  tenantId    String   @map("tenant_id")
+  details     Json?
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([action])
+  @@index([userId])
+  @@index([documentId])
+  @@index([tenantId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # ── PostgreSQL 16 ────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: docplatform-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: docplatform
+      POSTGRES_PASSWORD: docplatform
+      POSTGRES_DB: docplatform
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # ── Redis 7 ──────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: docplatform-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+
+  # ── Keycloak 24 ─────────────────────────────────────────────
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: docplatform-keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: dev-mem
+    ports:
+      - '8080:8080'
+    command: start-dev
+
+  # ── Elasticsearch 8 (optional — uncomment when needed) ──────
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+  #   container_name: docplatform-elasticsearch
+  #   restart: unless-stopped
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - ES_JAVA_OPTS=-Xms512m -Xmx512m
+  #   ports:
+  #     - '9200:9200'
+  #   volumes:
+  #     - elasticsearch_data:/usr/share/elasticsearch/data
+
+  # ── Kafka + Zookeeper (optional — uncomment when needed) ────
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.7.0
+  #   container_name: docplatform-zookeeper
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #   ports:
+  #     - '2181:2181'
+  #
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.7.0
+  #   container_name: docplatform-kafka
+  #   depends_on:
+  #     - zookeeper
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #   ports:
+  #     - '9092:9092'
+
+volumes:
+  postgres_data:
+  # elasticsearch_data:

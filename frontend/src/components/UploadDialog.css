@@ -1,0 +1,112 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+}
+
+.dialog-content {
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-color-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.dialog-header {
+  margin-bottom: 1.5rem;
+}
+
+.dialog-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.drop-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.drop-zone.active {
+  border-color: var(--accent-color);
+  background: rgba(88, 166, 255, 0.05);
+}
+
+.drop-zone-content {
+  flex-direction: column;
+  text-align: center;
+}
+
+.drop-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.drop-hint {
+  font-size: 0.9rem;
+}
+
+.supported-formats {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+
+.upload-progress, .upload-success {
+  flex-direction: column;
+  padding: 2rem 0;
+}
+
+.uploading-filename {
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-color), #818cf8);
+  transition: width 0.2s ease;
+}
+
+.progress-text {
+  font-size: 0.85rem;
+}
+
+.text-success {
+  color: var(--success-color);
+}
+
+.success-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}

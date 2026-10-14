@@ -1,0 +1,185 @@
+.viewer-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+.viewer-header {
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+}
+
+.viewer-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.viewer-body {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.viewer-sidebar {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.sidebar-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.sidebar-tab.active {
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  background: rgba(88, 166, 255, 0.05);
+}
+
+.outline-panel {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.panel-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.outline-list {
+  list-style: none;
+}
+
+.outline-item {
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.outline-item:hover {
+  color: var(--accent-color);
+}
+
+.outline-item.level-1 { padding-left: 0; font-weight: 600; }
+.outline-item.level-2 { padding-left: 1rem; }
+.outline-item.level-3 { padding-left: 2rem; font-size: 0.85rem; color: var(--text-secondary); }
+
+.viewer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: var(--bg-color); /* slightly darker for the background */
+}
+
+.document-page {
+  background: var(--bg-color-secondary);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 5rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  min-height: 1000px;
+  border: 1px solid var(--border-color);
+}
+
+/* Document content styles */
+.doc-h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.doc-h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #f0f6fc;
+}
+
+.doc-p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #c9d1d9;
+}
+
+.doc-li {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #c9d1d9;
+  list-style-type: disc;
+}
+
+.doc-table-container {
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+
+.doc-table-title {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.doc-table th, .doc-table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.doc-table th {
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+  color: #fff;
+}
+
+.doc-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
